@@ -1,0 +1,67 @@
+---
+name: "开源合规扫描 (ScanCode)"
+
+"on":
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  license-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装 ScanCode Toolkit
+        run: |
+          pip install scancode-toolkit
+
+      - name: 执行许可证扫描
+        run: |
+          echo " 开始扫描项目许可证..."
+          scancode --license --json-pp scan-results.json . --timeout 300
+
+      - name: 显示许可证摘要
+        run: |
+          echo " 许可证扫描结果摘要："
+          python3 << 'EOF'
+          import json
+          import os
+
+          if not os.path.exists('scan-results.json'):
+              print("未找到扫描结果文件")
+              exit(1)
+
+          with open('scan-results.json') as f:
+              data = json.load(f)
+
+          licenses = {}
+          for file in data.get('files', []):
+              for lic in file.get('licenses', []):
+                  key = lic.get('key', 'unknown')
+                  licenses[key] = licenses.get(key, 0) + 1
+
+          if not licenses:
+              print("未检测到任何许可证")
+          else:
+              print(f'\n检测到 {len(licenses)} 种不同类型的许可证：')
+              for lic, count in sorted(licenses.items()):
+                  print(f'  - {lic}: {count} 次出现')
+          EOF
+
+      - name: 上传扫描结果
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-scan-results
+          path: scan-results.json
+          retention-days: 30

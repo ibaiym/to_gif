@@ -1,0 +1,56 @@
+# Build directory
+build/
+cmake-build-*/
+out/
+
+# Compiled binaries
+/to_gif
+*.exe
+*.out
+*.app
+
+# Generated output files
+out_*.png
+output*.gif
+
+# Demo GIFs for README (keep these)
+!data/waves_10m.gif
+!data/waves_5m.gif
+!data/waves_3m.gif
+!data/waves.gif
+
+# Demo video for README (keep this one)
+!data/waves.mp4
+
+# Video files (large media files)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+
+# C++ object files and libraries
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.dylib
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.cache/
+compile_commands.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project internal docs
+TODO_OPTIMIZATIONS
+GITHUB_PUSH_GUIDE.md
